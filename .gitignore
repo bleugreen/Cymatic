@@ -57,3 +57,7 @@ DerivedData/
 
 ## Gcc Patch
 /*.gcno
+
+## Audio files
+*.wav
+*.mp3

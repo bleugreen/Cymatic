@@ -10,7 +10,7 @@
 #ifndef Analysis_h
 #define Analysis_h
 
-#include "ofxFft.h"
+
 #include "utils.h"
 //#include "CQParameters.h"
 //#include "Chromagram.h"
@@ -40,7 +40,7 @@ class Analysis
         
         
     private:
-        ofxFft* fft;
+//        ofxFft* fft;
 //        Chromagram* chrom;
     
         bool frameReady, addOvertone;

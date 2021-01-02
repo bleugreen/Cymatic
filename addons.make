@@ -1,3 +1,5 @@
+ofxAudioAnalyzer
+ofxAudioDecoder
 ofxBlur
 ofxGui
 ofxStk

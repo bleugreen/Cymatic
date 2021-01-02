@@ -1,0 +1,42 @@
+{
+    "default": {
+        "base": {
+            "font-family": "fonts/SF-Pro-Rounded-Medium.otf"
+        },
+        "fullsize": {
+            "text-align": "center"
+        },
+        "group-header": {
+            "font-family": "fonts/SF-Pro-Rounded-Regular.otf",
+            "font-size": 12
+        },
+        "panel-header": {
+            "font-family": "fonts/SF-Pro-Rounded-Regular.otf",
+            "font-size": 12
+        },
+        "toggle": {
+
+        },
+        "button": {
+
+        },
+        "slider": {
+
+        },
+        "label": {
+
+        },
+        "tabs": {
+
+        },
+        "value-plotter": {
+
+        },
+        "function-plotter": {
+
+        },
+        "input-field": {
+
+        }
+    }
+}

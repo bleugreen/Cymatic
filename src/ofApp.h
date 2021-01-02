@@ -4,6 +4,8 @@
 #include "ofxGui.h"
 #include "ofxStk.h"
 #include "Chromagram.h"
+#include "ofxAudioAnalyzer.h"
+#include "ofSoundPlayerExtended.h"
 
 class ofApp : public ofBaseApp{
     
@@ -26,83 +28,86 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
+    ofxAudioAnalyzer audioAnalyzer;
+
+    ofSoundPlayerExtended  player;
+    ofSoundBuffer soundBuffer;
+
+    int sampleRate;
+    int bufferSize;
     
     //--------------------------------------------------------------------------------
     // audio
     //--------------------------------------------------------------------------------
-    void audioIn(ofSoundBuffer& buffer);
-    void audioOut(ofSoundBuffer& buffer);
-    void soundstream_init();
-
-
-    int bufferSize;
-    stk::FileLoop file;
-    ofSoundStream soundStream;
-    bool shouldPlayAudio{};
-    
-    //--------------------------------------------------------------------------------
-    //   general
-    //--------------------------------------------------------------------------------
-    ofxGuiGroup* all;
-    ofxGuiGroup* modeControls;
-    ofParameter<void> minimizeButton;
-
-    void minimizePressed();
-    void maximize();
-
-
-
-
-
-    //--------------------------------------------------------------------------------
-    //   input mode
-    //--------------------------------------------------------------------------------
-    ofxGuiGroup *inputToggles;
-    ofParameterGroup inputParameters;
-    ofParameter<bool> input0;
-    ofParameter<bool> input1;
-
-    void setInputMode(int& index);
-
-
-    //--------------------------------------------------------------------------------
-    //   file manager
-    //--------------------------------------------------------------------------------
-    ofxGuiGroup *fileManager;
-    ofxGuiGroup *playbackControls;
-    ofParameter<void> loadButton;
-    ofParameter<void> playButton;
-    ofParameter<void> resetButton;
-    ofParameter<string> filePath;
-
-    bool inputBool{true}, fileLoaded{};
-    bool loadPressed{}, playPressed{}, resetPressed{};
-
-    void loadFile();
-    void playFile();
-    void restartFile();
-    
-    
+//    void audioIn(ofSoundBuffer& buffer);
+//    void audioOut(ofSoundBuffer& buffer);
+//    void soundstream_init();
+//
+//
+//    int bufferSize;
+//    stk::FileLoop file;
+//    ofSoundStream soundStream;
+//    bool shouldPlayAudio{};
+//
+//    //--------------------------------------------------------------------------------
+//    //   general
+//    //--------------------------------------------------------------------------------
+//    ofxGuiGroup* all;
+//    ofxGuiGroup* modeControls;
+//    ofParameter<void> minimizeButton;
+//
+//    void minimizePressed();
+//    void maximize();
+//
+//
+//
+//
+//
+//    //--------------------------------------------------------------------------------
+//    //   input mode
+//    //--------------------------------------------------------------------------------
+//    ofxGuiGroup *inputToggles;
+//    ofParameterGroup inputParameters;
+//    ofParameter<bool> input0;
+//    ofParameter<bool> input1;
+//
+//    void setInputMode(int& index);
+//
+//
+//    //--------------------------------------------------------------------------------
+//    //   file manager
+//    //--------------------------------------------------------------------------------
+//    ofxGuiGroup *fileManager;
+//    ofxGuiGroup *playbackControls;
+//    ofParameter<void> loadButton;
+//    ofParameter<void> playButton;
+//    ofParameter<void> resetButton;
+//    ofParameter<string> filePath;
+//
+//    bool inputBool{true}, fileLoaded{};
+//    bool loadPressed{}, playPressed{}, resetPressed{};
+//
+//    void loadFile();
+//    void playFile();
+//    void restartFile();
+//
+//
     Chromagram* chrom;
     ofxPanel gui;
-
-    void circleResolutionChanged(int & circleResolution);
-    void ringButtonPressed();
-
-    bool bHide;
-
-    ofParameter<float> radius;
-    ofParameter<ofColor> color;
-    ofParameter<glm::vec2> center;
-    ofParameter<int> circleResolution;
-    ofParameter<bool> filled;
-    ofxButton twoCircles;
-    ofxButton ringButton;
-    ofParameter<string> screenSize;
-
-    
-
-    ofSoundPlayer ring;
+//
+//    void circleResolutionChanged(int & circleResolution);
+//    void ringButtonPressed();
+//
+//    bool bHide;
+//
+//    ofParameter<float> radius;
+//    ofParameter<ofColor> color;
+//    ofParameter<glm::vec2> center;
+//    ofParameter<int> circleResolution;
+//    ofParameter<bool> filled;
+//    ofxButton twoCircles;
+//    ofxButton ringButton;
+//    ofParameter<string> screenSize;
     
     
     
