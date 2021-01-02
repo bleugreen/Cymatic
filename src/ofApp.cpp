@@ -5,6 +5,17 @@
 void ofApp::setup(){
     ofSetVerticalSync(true);
     ofxBaseGui::enableHiDpi();
+    
+    win = (ofAppGLFWWindow*)ofGetWindowPtr();
+    ofSetWindowShape(win->getPixelScreenCoordScale()*1024, win->getPixelScreenCoordScale()*768);
+//    if(win->getPixelScreenCoordScale() == 2){
+//        themeName = "retina-theme.json";
+//    }
+//    else{
+    cout << "scale: " << win->getPixelScreenCoordScale() << endl;
+    coordScale = win->getPixelScreenCoordScale();
+    themeName = "default-theme.json";
+    
 
     
     bufferSize = 2048;
@@ -53,7 +64,7 @@ void ofApp::setup(){
         {"show-header", true},
         {"position", "static"},
     }));
-    all->loadTheme("default-theme.json");
+    
     
     
     // input mode / file manager
@@ -64,11 +75,11 @@ void ofApp::setup(){
     
     inputToggles = all->addGroup(inputParameters);
     inputToggles->setExclusiveToggles(true);
-    inputToggles->loadTheme("default-theme.json");
+    //inputToggles->loadTheme(themeName);
     inputToggles->setConfig(ofJson({{"type", "radio"}}));
     
     fileManager = inputToggles->addGroup("File Manager");
-    fileManager->loadTheme("default-theme.json");
+    fileManager->loadTheme(themeName);
     fileManager->setShowHeader(false);
     fileManager->add(filePath.set("Path/To/WavFile"));
     fileManager->add(loadButton.set("Choose File"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
@@ -82,7 +93,7 @@ void ofApp::setup(){
         {"flex-wrap", "wrap"},
         {"show-header", false},
     }));
-    playbackControls->loadTheme("default-theme.json");
+    playbackControls->loadTheme(themeName);
     playbackControls->add(playButton.set("Play"), ofJson({{"type", "fullsize"}, {"text-align", "center"}, {"width", "45%"}}));
     playbackControls->add(resetButton.set("Reset"), ofJson({{"type", "fullsize"}, {"text-align", "center"}, {"width", "45%"}}));
     playbackControls->minimize();
@@ -109,6 +120,8 @@ void ofApp::setup(){
     
     // minimize button
     minimizeButton.addListener(this, &ofApp::minimizePressed);
+    
+    all->loadTheme(themeName);
 }
 
 //-------------------------------------------------------------------------------------
@@ -293,6 +306,23 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    if(coordScale != win->getPixelScreenCoordScale()){
+        
+        coordScale = win->getPixelScreenCoordScale();
+        cout << "scale changed -- new scale = " << coordScale << endl;
+        switch (coordScale) {
+            case 1:
+                all->loadTheme("default-theme.json");
+                break;
+            case 2:
+                all->loadTheme("retina-theme.json");
+                break;
+            default:
+                break;
+        }
+    }
+    
+    
     //draw waveforms:
     ofSetColor(ofColor::hotPink);
     waveform_l.draw();
