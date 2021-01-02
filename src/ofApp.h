@@ -1,7 +1,8 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxGui.h"
+#include "ofxBaseGui.h"
+#include "ofxGuiExtended.h"
 #include "ofxStk.h"
 #include "Chromagram.h"
 #include "ofxAudioAnalyzer.h"
@@ -28,7 +29,8 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
-    ofxAudioAnalyzer audioAnalyzer;
+    ofxAudioAnalyzer audioAnalyzerIn;
+    ofxAudioAnalyzer audioAnalyzerOut;
 
     ofSoundPlayerExtended  player;
     ofSoundBuffer soundBuffer;
@@ -36,64 +38,76 @@ public:
     int sampleRate;
     int bufferSize;
     
+    Chromagram* chrom;
+    
+    bool ready{};
+    
     //--------------------------------------------------------------------------------
     // audio
     //--------------------------------------------------------------------------------
-//    void audioIn(ofSoundBuffer& buffer);
-//    void audioOut(ofSoundBuffer& buffer);
+    void audioIn(ofSoundBuffer& buffer);
+    void audioOut(ofSoundBuffer& buffer);
 //    void soundstream_init();
 //
 //
 //    int bufferSize;
 //    stk::FileLoop file;
-//    ofSoundStream soundStream;
+    ofSoundStream soundStream;
+    bool inputMode{};
+    
+    vector<float> spectrum_l, spectrum_r;
+
+    ofPolyline waveform_l, waveform_r;
 //    bool shouldPlayAudio{};
 //
 //    //--------------------------------------------------------------------------------
-//    //   general
-//    //--------------------------------------------------------------------------------
-//    ofxGuiGroup* all;
-//    ofxGuiGroup* modeControls;
-//    ofParameter<void> minimizeButton;
-//
-//    void minimizePressed();
-//    void maximize();
-//
-//
-//
-//
-//
-//    //--------------------------------------------------------------------------------
-//    //   input mode
-//    //--------------------------------------------------------------------------------
-//    ofxGuiGroup *inputToggles;
-//    ofParameterGroup inputParameters;
-//    ofParameter<bool> input0;
-//    ofParameter<bool> input1;
-//
-//    void setInputMode(int& index);
-//
-//
-//    //--------------------------------------------------------------------------------
-//    //   file manager
-//    //--------------------------------------------------------------------------------
-//    ofxGuiGroup *fileManager;
-//    ofxGuiGroup *playbackControls;
-//    ofParameter<void> loadButton;
-//    ofParameter<void> playButton;
-//    ofParameter<void> resetButton;
-//    ofParameter<string> filePath;
-//
-//    bool inputBool{true}, fileLoaded{};
-//    bool loadPressed{}, playPressed{}, resetPressed{};
-//
-//    void loadFile();
-//    void playFile();
-//    void restartFile();
-//
-//
-    Chromagram* chrom;
-    ofxPanel gui;
+    // GUI
+    //--------------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------------
+    //   general
+    //--------------------------------------------------------------------------------
+    ofxGuiGroup* all;
+    ofxGui gui;
+    ofxGuiGroup* modeControls;
+    ofParameter<void> minimizeButton;
+
+    void minimizePressed();
+    void maximize();
+
+
+
+
+
+    //--------------------------------------------------------------------------------
+    //   input mode
+    //--------------------------------------------------------------------------------
+    ofxGuiGroup *inputToggles;
+    ofParameterGroup inputParameters;
+    ofParameter<bool> input0;
+    ofParameter<bool> input1;
+
+    void setInputMode(int& index);
+
+
+    //--------------------------------------------------------------------------------
+    //   file manager
+    //--------------------------------------------------------------------------------
+    ofxGuiGroup *fileManager;
+    ofxGuiGroup *playbackControls;
+    ofParameter<void> loadButton;
+    ofParameter<void> playButton;
+    ofParameter<void> resetButton;
+    ofParameter<string> filePath;
+
+    bool inputBool{true}, fileLoaded{};
+    bool loadPressed{}, playPressed{}, resetPressed{};
+
+    void loadFile();
+    void playFile();
+    void restartFile();
+
+
 //
 //    void circleResolutionChanged(int & circleResolution);
 //    void ringButtonPressed();
