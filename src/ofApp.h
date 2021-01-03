@@ -15,12 +15,13 @@
 class ofApp : public ofBaseApp{
     
 public:
+    //--------------------------------------------------------------------------------
+    // of builtins
+    //--------------------------------------------------------------------------------
     void setup();
     void update();
     void draw();
-    
     void exit();
-
     void keyPressed(int key);
     void keyReleased(int key);
     void mouseMoved(int x, int y );
@@ -33,23 +34,8 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
-    ofxAudioAnalyzer audioAnalyzerIn;
-    ofxAudioAnalyzer audioAnalyzerOut;
-
-    ofSoundPlayerExtended  player;
-    ofSoundBuffer soundBuffer;
-
-    int sampleRate;
-    int bufferSize;
-    
-    Chromagram* chrom;
-    
     bool ready{};
     
-    ofAppGLFWWindow* win;
-    int coordScale;
-    
-    std::string themeName;
     
     //--------------------------------------------------------------------------------
     // audio
@@ -58,21 +44,28 @@ public:
     void audioOut(ofSoundBuffer& buffer);
 
     ofSoundStream soundStream;
-    bool inputMode{};
+    ofSoundPlayerExtended  player;
+    ofSoundBuffer soundBuffer;
     
     Analysis analysis;
     
-    vector<float> spectrum_l, spectrum_r;
+    int sampleRate;
+    int bufferSize;
+    bool inputMode{};
 
-    ofPolyline waveform_l, waveform_r;
     
     //--------------------------------------------------------------------------------
     // drawing
     //--------------------------------------------------------------------------------
     void updateLayout(int w, int h);
-    int controlWidth;
 
     DisplayController dc;
+    
+    ofAppGLFWWindow* win;
+    std::string themeName;
+    int coordScale;
+    int controlWidth;
+    
 
     //--------------------------------------------------------------------------------
     // GUI
@@ -81,49 +74,47 @@ public:
     //--------------------------------------------------------------------------------
     //   general
     //--------------------------------------------------------------------------------
+    void minimizePressed();
+    void maximize();
+    
     ofxGuiGroup* all;
     ofxGui gui;
     ofxGuiGroup* modeControls;
     ofParameter<void> minimizeButton;
 
-    void minimizePressed();
-    void maximize();
-
-
-
-
-
+    
     //--------------------------------------------------------------------------------
     //   input mode
     //--------------------------------------------------------------------------------
+    void setInputMode(int& index);
+    
     ofxGuiGroup *inputToggles;
     ofParameterGroup inputParameters;
     ofParameter<bool> input0;
     ofParameter<bool> input1;
 
-    void setInputMode(int& index);
-
 
     //--------------------------------------------------------------------------------
     //   file manager
     //--------------------------------------------------------------------------------
-    ofxGuiGroup *fileManager;
+    void loadFile();
     
+    ofxGuiGroup *fileManager;
     ofParameter<void> loadButton;
     ofParameter<string> filePath;
 
-    bool inputBool{true}, fileLoaded{};
+    bool inputBool{true};
+    bool fileLoaded{};
     bool loadPressed{};
-
-    void loadFile();
     
     
     //--------------------------------------------------------------------------------
     //   file player
     //--------------------------------------------------------------------------------
-    bool playPressed{}, resetPressed{}, shouldPlayAudio{};
     void playFile();
     void restartFile();
+    void seekChanged(float& val);
+    void volumeChanged(float& val);
     
     ofxGuiGroup *playbackControls;
     ofParameter<void> playButton;
@@ -131,14 +122,10 @@ public:
     ofParameter<float> seekSlider;
     ofParameter<float> volumeSlider;
     
-    void seekChanged(float& val);
-    void volumeChanged(float& val);
-    
     float file_pos;
+    bool playPressed{};
+    bool resetPressed{};
+    bool shouldPlayAudio{};
 
-
-    
-    
-    
-};
+}; // ofApp
 

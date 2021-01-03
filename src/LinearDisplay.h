@@ -31,10 +31,12 @@ protected:
     // gui parameters
     ofParameter<bool> overtoneToggle;
     ofParameter<bool> colorToggle;
+    ofParameter<float> smooth;
     
     // local audio data
     std::vector<float> octave;
     std::vector<float> scale;
+    std::vector<float> scale_max;
     
     // general drawing variables
     float halfW, halfH, xOffset, yOffset;

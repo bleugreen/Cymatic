@@ -14,7 +14,7 @@ namespace utils {
 
 enum Mode{ LINEAR, POLAR, RAW, OSC };
 
-enum soundType{ FFT, HPCP, RAW_FULL, RAW_OCTAVE, SMOOTH_OCTAVE, RAW_SCALE, SMOOTH_SCALE, SMOOTH_SCALE_OT };
+enum soundType{ FFT, HPCP, BARK, RAW_FULL, RAW_OCTAVE, SMOOTH_OCTAVE, RAW_SCALE, SMOOTH_SCALE, SMOOTH_SCALE_OT };
 
 struct soundData {
     soundType label;

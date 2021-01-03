@@ -27,7 +27,8 @@ LinearDisplay::LinearDisplay(){
 
 void LinearDisplay::setup(){
     
-    dataRequest = {utils::SMOOTH_OCTAVE, utils::SMOOTH_SCALE };
+    dataRequest = {utils::HPCP, utils::BARK };
+    
 }
 
 //-------------------------------------------------------------------------------------
@@ -35,8 +36,8 @@ void LinearDisplay::setDimensions(int w, int h){
     width = w;
     height = h;
     
-    halfW = ((float)w*0.9);
-    halfH =  ((float)h*0.425);
+    halfW = (width*0.9);
+    halfH =  (height*0.425);
 
     xOffset = h*0.05;
     yOffset = w*0.05;
@@ -44,14 +45,11 @@ void LinearDisplay::setDimensions(int w, int h){
 
 //-------------------------------------------------------------------------------------
 void LinearDisplay::buildGui(ofxGuiGroup *parent){
-    group = parent->addGroup("linear parameters");
-    group->setShowHeader(false);
+    group = parent->addGroup("Controls");
     
-    parameters.setName("Linear Controls");
-    parameters.add(overtoneToggle.set("Factor Overtones", true));
-    parameters.add(colorToggle.set("Color", true));
+    group->add(smooth.set("Smooth", 3., 1., 10), ofJson({{"precision", 1}}));
+    group->add(colorToggle.set("Color", true));
     
-    group->add(parameters);
 }
 
 //-------------------------------------------------------------------------------------
@@ -69,23 +67,40 @@ void LinearDisplay::draw(){
 
 //-------------------------------------------------------------------------------------
 void LinearDisplay::update(std::vector<utils::soundData> newData){
-    if(overtoneToggle) dataRequest[1] = utils::SMOOTH_SCALE_OT;
-    else dataRequest[1] = utils::SMOOTH_SCALE;
+//    if(overtoneToggle) dataRequest[1] = utils::SMOOTH_SCALE_OT;
+//    else dataRequest[1] = utils::SMOOTH_SCALE;
     
     for(utils::soundData container : newData){
         switch (container.label) {
-            case utils::SMOOTH_SCALE:
-            case utils::SMOOTH_SCALE_OT:
-                scale = container.data;
+            case utils::HPCP:
+                if(octave.size() != container.data.size()){
+                    octave.resize(container.data.size());
+                }
+                for(int i=0; i<container.data.size(); i++){
+                    if(container.data[i] < 0.5) octave[i] = 0;
+                    else{
+                        octave[i] = utils::approxRollingAverage(octave[i], container.data[i], smooth);
+                    }
+                }
                 break;
-                
-            case utils::SMOOTH_OCTAVE:
-                octave = container.data;
+            case utils::BARK:
+                //utils::normalizeVector(&container.data);
+                if(scale.size() != container.data.size()){
+                    scale.resize(container.data.size());
+                    scale_max.resize(container.data.size());
+                }
+                for(int i=0; i<container.data.size(); i++){
+                    scale[i] = utils::approxRollingAverage(scale[i], container.data[i], smooth);
+                    if(container.data[i] > scale_max[i]) scale_max[i] = container.data[i];
+                }
                 break;
             default:
                 break;
         }
     }
+    
+
+    
     
 }
 
@@ -200,7 +215,7 @@ void LinearDisplay::drawLinOctave(int w, int h){
 // full-scale
 //--------------------------------------------------------------------------------------
 void LinearDisplay::drawLinScale(int w, int h){
-    
+
     // Draw border
     ofPushStyle();
     ofSetColor(ofColor::white);
@@ -211,10 +226,10 @@ void LinearDisplay::drawLinScale(int w, int h){
     outer_rect.width = w;
     outer_rect.height = h;
     ofDrawRectangle(outer_rect);
-    std::string label = "Full Scale";
+    std::string label = "Bark Scale";
     if(yOffset > 20) ofDrawBitmapString(label, 0, -8);
     ofPopStyle();
-    
+
     if(scale.size() <= 1) return;
     // Initialize graph values
     //    Data = Summed Octave
@@ -227,19 +242,19 @@ void LinearDisplay::drawLinScale(int w, int h){
     float edgeMargin = ((float)w - (barWidth*scale.size() + margin*(scale.size()-1))) / 2;
     maxHeight = ((float)h)*0.95;
     y_offset = (float)(h + maxHeight)/2;
-    
+
     int x = 0;
     int noteNum = 0;
     int octaveNum = 2;
-    
+
     ofPushMatrix();
     ofTranslate(edgeMargin, y_offset); //Move to bottom-left corner for start
-    
+
     //loop through raw values
     for(int i=0; i<scale.size(); i++){
-        
+
         ofPushStyle();
-        
+
         ofRectangle rect;
         rect.x = x;
         rect.y = 0;
@@ -247,13 +262,10 @@ void LinearDisplay::drawLinScale(int w, int h){
 
         // If rectangle height is below min. threshold, draw min rectangle
         // y-axis is 'flipped' i.e. negative is upwards
-        if(scale[i] < 0.05 || scale[i] > 1.0 || scale[i] != scale[i]) {
-            rect.height =  -3;
-        }
-        else{
-            rect.height = -scale[i]*maxHeight;
-        }
-        
+        float scaledVal = ofMap(scale[i], 0, scale_max[i], 0, 1);
+        rect.height = -scaledVal*maxHeight;
+    
+
         float hue, sat, brightness;
         if(colorToggle){
             hue = (i%12)*(255.0/12);
@@ -265,17 +277,17 @@ void LinearDisplay::drawLinScale(int w, int h){
             sat = 0;
             brightness = scale[i]*255;
         }
-        
+
         ofColor color = ofColor::fromHsb(hue, sat, brightness);
         ofSetColor(color);
-        
+
         ofDrawRectangle(rect);
         ofPopStyle();
-        
+
         // increment x position, note, and octave (if necessary)
         x += barWidth+margin;
     }
-    
+
     ofPopMatrix();
 }
 

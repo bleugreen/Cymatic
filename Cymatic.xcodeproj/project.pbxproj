@@ -35,6 +35,7 @@
 		30A2CC2625A17ED3005D2D28 /* Analysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30A2CC2525A17ED3005D2D28 /* Analysis.cpp */; };
 		30A2CC2B25A1989C005D2D28 /* DisplayController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30A2CC2925A1989C005D2D28 /* DisplayController.cpp */; };
 		30A2CC2C25A1989C005D2D28 /* RawDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30A2CC2A25A1989C005D2D28 /* RawDisplay.cpp */; };
+		30A2CC3025A1A14D005D2D28 /* LinearDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30A2CC2E25A1A14D005D2D28 /* LinearDisplay.cpp */; };
 		35535925AAEE52A64874B881 /* ofxGuiRangeSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68A736255108DF03AFC4BB3E /* ofxGuiRangeSlider.cpp */; };
 		3C8DAD7A64F6347D7021518E /* ofxGuiSliderGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6427743BBF76D108B64AD4C0 /* ofxGuiSliderGroup.cpp */; };
 		3CA17DE70B38CA2592D51E7D /* ofxAudioAnalyzerAlgorithms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11DB3436AD0B7453E982FDA2 /* ofxAudioAnalyzerAlgorithms.cpp */; };
@@ -174,6 +175,8 @@
 		30A2CC2925A1989C005D2D28 /* DisplayController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayController.cpp; sourceTree = "<group>"; };
 		30A2CC2A25A1989C005D2D28 /* RawDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RawDisplay.cpp; sourceTree = "<group>"; };
 		30A2CC2D25A198EA005D2D28 /* Display.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Display.h; sourceTree = "<group>"; };
+		30A2CC2E25A1A14D005D2D28 /* LinearDisplay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LinearDisplay.cpp; sourceTree = "<group>"; };
+		30A2CC2F25A1A14D005D2D28 /* LinearDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinearDisplay.h; sourceTree = "<group>"; };
 		35DDC9D7877887B9D23690A4 /* EventTarget.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = EventTarget.h; path = ../../../addons/ofxGuiExtended/src/DOM/EventTarget.h; sourceTree = SOURCE_ROOT; };
 		35F7217E175F756A4BC0846D /* sink.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sink.h; path = ../../../addons/ofxAudioAnalyzer/libs/essentia/include/essentia/streaming/sink.h; sourceTree = SOURCE_ROOT; };
 		393C9C8AE87812AC9B52CEFB /* algorithmfactory.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = algorithmfactory.h; path = ../../../addons/ofxAudioAnalyzer/libs/essentia/include/essentia/algorithmfactory.h; sourceTree = SOURCE_ROOT; };
@@ -1286,6 +1289,8 @@
 				30A2CC2725A1989C005D2D28 /* DisplayController.h */,
 				30A2CC2A25A1989C005D2D28 /* RawDisplay.cpp */,
 				30A2CC2825A1989C005D2D28 /* RawDisplay.h */,
+				30A2CC2E25A1A14D005D2D28 /* LinearDisplay.cpp */,
+				30A2CC2F25A1A14D005D2D28 /* LinearDisplay.h */,
 				05033CE3FA2B7668E6FC165F /* Analysis.h */,
 				30A2CC2525A17ED3005D2D28 /* Analysis.cpp */,
 				307B69A925A15EE0002F0483 /* utils.h */,
@@ -1514,6 +1519,7 @@
 				8DE52B72CB62786CAB8233F7 /* ofxGuiButton.cpp in Sources */,
 				4524F366BF3EEC2EFC12B68F /* ofxGuiFpsPlotter.cpp in Sources */,
 				F2DE26B77052C57086C4C69B /* ofxGuiFunctionPlotter.cpp in Sources */,
+				30A2CC3025A1A14D005D2D28 /* LinearDisplay.cpp in Sources */,
 				03B8731D7EEC6356D37EB218 /* ofxGuiFunctionSlider.cpp in Sources */,
 				7CEBB18388F905779AB54F80 /* ofxGuiGraphics.cpp in Sources */,
 				F632072F6E6313CD75B4B70F /* ofxGuiInputField.cpp in Sources */,

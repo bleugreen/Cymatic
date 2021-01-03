@@ -3,27 +3,26 @@
     
 //--------------------------------------------------------------
 void ofApp::setup(){
+    // app init
     ofSetVerticalSync(true);
     ofSetFrameRate(60);
     ofBackground(12);
     
+    // window config (for switching between retina/normal scale
     win = (ofAppGLFWWindow*)ofGetWindowPtr();
     coordScale = win->getPixelScreenCoordScale();
     ofSetWindowShape(win->getPixelScreenCoordScale()*1024, win->getPixelScreenCoordScale()*768);
-//    if(win->getPixelScreenCoordScale() == 2){
-//        themeName = "retina-theme.json";
-//    }
-//    else{
-    cout << "scale: " << win->getPixelScreenCoordScale() << endl;
-    
     themeName = "default-theme.json";
+    if(coordScale == 2) themeName = "retina-theme.json";
     
+    // init variables
+    file_pos = 0;
+    inputMode = true;
     
+    // audio init
     bufferSize = 2048;
     sampleRate = 44100;
     int channels = 1;
-    
-    inputMode = true;
     
     ofSoundStreamSettings settings;
     settings.setOutListener(this);
@@ -38,22 +37,14 @@ void ofApp::setup(){
     analysis.init(sampleRate, bufferSize, channels);
     
     player.load("filetype-test.mp3");
+
     
-    
-    
-    //chrom = new Chromagram(Chromagram::Parameters(sampleRate));
-    
-    
-    
-    
-    //-------------------------------------------------------------------------------------
-    // GUI Initialization
-    //-------------------------------------------------------------------------------------
-    
-    
+    //----------------------------------------------------------------------------------
+    // gui
+    //----------------------------------------------------------------------------------
     
     // main panel
-    //-------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------
     gui.setupFlexBoxLayout();
     all = gui.addGroup("Sonic Profiler", ofJson({
         {"flex-direction", "column"},
@@ -65,9 +56,8 @@ void ofApp::setup(){
     }));
     
     
-    
     // input mode / file manager
-    //-------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------
     inputParameters.setName("Input Source");
     inputParameters.add(input0.set("Microphone", false));
     inputParameters.add(input1.set("Play File", false));
@@ -79,8 +69,6 @@ void ofApp::setup(){
     fileManager = inputToggles->addGroup("File Manager");
     fileManager->setShowHeader(false);
     
-    
-    
     playbackControls = fileManager->addGroup("Playback",ofJson({
         {"flex-direction", "row"},
         {"flex", 0},
@@ -90,10 +78,7 @@ void ofApp::setup(){
         {"flex-wrap", "wrap"},
         {"show-header", false},
     }));
-
-    
     playbackControls->add(filePath.set("path"), ofJson({{"text-align", "center"}, {"width", "90%"}}));
-    filePath.setMax("AAAAAAAAAAAAAAAAAAAAAAAAA");
     playbackControls->add(playButton.set("Play/Pause"), ofJson({{"type", "fullsize"}, {"text-align", "center"}, {"width", "45%"}}));
     playbackControls->add(resetButton.set("Reset"), ofJson({{"type", "fullsize"}, {"text-align", "center"}, {"width", "45%"}}));
     float duration = player.getDuration();
@@ -103,16 +88,17 @@ void ofApp::setup(){
     
     fileManager->add(loadButton.set("Choose File"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
     fileManager->minimize();
-
-   
+    
+    
     // misc
-    //-------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------
     dc.setup(&analysis, ofGetWidth(), ofGetHeight(), all);
     
     all->add(minimizeButton.set("Collapse All"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
+ 
     
     // listeners
-    //-------------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------
     
     // input radio
     inputToggles->getActiveToggleIndex().addListener(this, &ofApp::setInputMode);
@@ -123,42 +109,26 @@ void ofApp::setup(){
     playButton.addListener(this, &ofApp::playFile);
     resetButton.addListener(this, &ofApp::restartFile);
     
-    // minimize button
-    minimizeButton.addListener(this, &ofApp::minimizePressed);
-    
+    // playback sliders
     seekSlider.addListener(this, &ofApp::seekChanged);
     volumeSlider.addListener(this, &ofApp::volumeChanged);
     
-    all->loadTheme(themeName);
+    // minimize button
+    minimizeButton.addListener(this, &ofApp::minimizePressed);
     
-    file_pos = 0;
+    // load theme
+    all->loadTheme(themeName);
     
     // Call resize to update control panel width and adjust drawing boxes
     windowResized(WIN_WIDTH, WIN_HEIGHT);
     
-    
+    // signal
     ready = true;
 }
 
 //-------------------------------------------------------------------------------------
 // listeners
 //-------------------------------------------------------------------------------------
-
-//--------------------------------------------------------------
-// Update input source and show/hide file manager
-void ofApp::seekChanged(float &val){
-    if(val != file_pos){
-        float pct = val / player.getDuration();
-        player.setPosition(pct);
-    }
-}
-
-//--------------------------------------------------------------
-// Update input source and show/hide file manager
-void ofApp::volumeChanged(float &val){
-    player.setVolume(val / 100.);
-}
-
 
 //--------------------------------------------------------------
 // Update input source and show/hide file manager
@@ -191,8 +161,6 @@ void ofApp::loadFile(){
         loadPressed = true;
 
         // Opens system dialog asking for a file
-        // Checks to make sure it's .wav then loads
-
         ofFileDialogResult result = ofSystemLoadDialog("Load file");
 
         if(result.bSuccess) {
@@ -200,9 +168,6 @@ void ofApp::loadFile(){
             playbackControls->minimize();
             string path = result.getPath();
             string name = result.getName();
-            cout << path << endl;
-
-     
                 try{
                     player.unload();
                     if(player.load(path)){
@@ -223,10 +188,8 @@ void ofApp::loadFile(){
                 catch(...){
                     ofSystemAlertDialog("Invalid File");
                 }
-
         }
     }
-
     loadPressed = false;
 }
 
@@ -268,6 +231,20 @@ void ofApp::restartFile(){
     
 }
 
+//--------------------------------------------------------------
+// Update playback position
+void ofApp::seekChanged(float &val){
+    if(val != file_pos){
+        float pct = val / player.getDuration();
+        player.setPosition(pct);
+    }
+}
+
+//--------------------------------------------------------------
+// Update output volume
+void ofApp::volumeChanged(float &val){
+    player.setVolume(val / 100.);
+}
 
 //--------------------------------------------------------------
 // Collapse main panels
@@ -276,13 +253,15 @@ void ofApp::minimizePressed(){
     inputToggles->minimize();
 }
 
+//--------------------------------------------------------------
+// Expand main panels
 void ofApp::maximize(){
     dc.maximize();
     inputToggles->maximize();
 }
 
 //--------------------------------------------------------------
-// Retrieves and formats current frame of audio input then sends to analysis
+// Retrieves current frame then sends to analysis
 void ofApp::audioIn(ofSoundBuffer& buffer) {
     if(inputMode && ready)
     {
@@ -290,8 +269,8 @@ void ofApp::audioIn(ofSoundBuffer& buffer) {
     }
 }
 
-
 //--------------------------------------------------------------
+// If playing from file, retrieves current frame and sends to analysis
 void ofApp::update(){
     if(!inputMode && ready){
         soundBuffer = player.getCurrentSoundBuffer(bufferSize);
@@ -308,6 +287,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    // Checks to see if scale changed
     if(coordScale != win->getPixelScreenCoordScale()){
         coordScale = win->getPixelScreenCoordScale();
         switch (coordScale) {
@@ -324,9 +304,7 @@ void ofApp::draw(){
     
     ofPushMatrix();
     ofTranslate(controlWidth, 0);
-    
     dc.draw();
-    
     ofPopMatrix();
 }
 

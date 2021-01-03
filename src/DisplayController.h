@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Analysis.h"
-//#include "LinearDisplay.h"
+#include "LinearDisplay.h"
 #include "RawDisplay.h"
 //#include "OscDisplay.h"
 
@@ -39,26 +39,25 @@ public:
     
     ofxGuiGroup *modeControlGroup; // add all mode-specific parameters, only show current mode
     
-    
 protected:
+    void setDisplayMode(int& index);
+    
     std::vector<std::shared_ptr<Display>> modes;
     std::vector<ofxGuiGroup*> modeControls;
     
-    ofParameter<bool> disp0, disp1, disp2;
-    
-    void setDisplayMode(int& index);
-    
-    
-    bool ready{};
-    int width, height;
-    int current_mode;
-    Analysis* analysis;
-    
-    //std::shared_ptr<LinearDisplay> ld;
+    std::shared_ptr<LinearDisplay> ld;
     std::shared_ptr<RawDisplay> rd;
     //std::shared_ptr<OscDisplay> od;
     
-};
+    Analysis* analysis;
+    
+    ofParameter<bool> disp0, disp1, disp2;
+    
+    bool ready{};
+    int width;
+    int height;
+    int current_mode;
+}; // DisplayController.h
 
 
 

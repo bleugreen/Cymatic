@@ -14,9 +14,9 @@ void DisplayController::setup(Analysis* a, int w, int h, ofxGuiGroup* all){
     
     current_mode = 0;
     
-//    ld = std::shared_ptr<LinearDisplay>(new LinearDisplay());
-//    ld->setup();
-//    modes.push_back(ld);
+    ld = std::shared_ptr<LinearDisplay>(new LinearDisplay());
+    ld->setup();
+    modes.push_back(ld);
     
     rd = std::shared_ptr<RawDisplay>(new RawDisplay());
     rd->setup();
@@ -27,11 +27,10 @@ void DisplayController::setup(Analysis* a, int w, int h, ofxGuiGroup* all){
 //    modes.push_back(od);
     
     modeSelector.setName("Display Mode");
-   // modeSelector.add(disp0.set(ld->name,false));
+    modeSelector.add(disp0.set(ld->name,false));
     modeSelector.add(disp1.set(rd->name,false));
   //  modeSelector.add(disp2.set(od->name,false));
 
-    
     modeSelectorGroup = all->addGroup(modeSelector);
     modeSelectorGroup->setExclusiveToggles(true);
     modeSelectorGroup->loadTheme("default-theme.json");
@@ -50,19 +49,13 @@ void DisplayController::setup(Analysis* a, int w, int h, ofxGuiGroup* all){
         modeControls.push_back(modeGroup);
     }
         
-    
-    
-    
     // set up modes
     // build selector list
     //
     modeSelectorGroup->getActiveToggleIndex().addListener(this, &DisplayController::setDisplayMode);
     modeSelectorGroup->setActiveToggle(0);
 
-    
-    
     ready = true;
-    
 }
 
 void DisplayController::setDisplayMode(int& index){
@@ -72,10 +65,10 @@ void DisplayController::setDisplayMode(int& index){
             current_mode = 0;
             modeControls[0]->maximize();
                 break;
-//            case 1:
-//            current_mode = 1;
-//            modeControls[1]->maximize();
-//                break;
+            case 1:
+            current_mode = 1;
+            modeControls[1]->maximize();
+                break;
 //            case 2:
 //            current_mode = 2;
 //            modeControls[2]->maximize();

@@ -219,10 +219,10 @@ void RawDisplay::drawFftWindow(float w, float h){
     x = 0;
     for(int i=0; i<size; i++){
         if(lin){
-            x = (((float)i) / size) * w;
+            x = ofMap(i, 0, (size-1), 0, w);
         }
         else{
-            float lin_x = (i*w) / (size-1);
+            float lin_x = ofMap(i, 0, (size-1), 0, w);
             x = w*(logf(lin_x+1)/logf(w+1));
         }
         
