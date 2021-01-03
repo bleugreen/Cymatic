@@ -4,7 +4,8 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetVerticalSync(true);
-    ofxBaseGui::enableHiDpi();
+    ofSetFrameRate(60);
+    ofBackground(12);
     
     win = (ofAppGLFWWindow*)ofGetWindowPtr();
     coordScale = win->getPixelScreenCoordScale();
@@ -17,8 +18,6 @@ void ofApp::setup(){
     
     themeName = "default-theme.json";
     
-
-    cout << utils::secondsToTimeLabel(326.993) << endl;
     
     bufferSize = 2048;
     sampleRate = 44100;
@@ -36,8 +35,7 @@ void ofApp::setup(){
     
     soundStream.setup(settings);
     
-    audioAnalyzerIn.setup(sampleRate, bufferSize, 1);
-    audioAnalyzerOut.setup(sampleRate, bufferSize, 2);
+    analysis.init(sampleRate, bufferSize, channels);
     
     player.load("filetype-test.mp3");
     
@@ -109,7 +107,7 @@ void ofApp::setup(){
    
     // misc
     //-------------------------------------------------------------------------------------
-//    dc.setup(&analysis, ofGetWidth(), ofGetHeight(), all);
+    dc.setup(&analysis, ofGetWidth(), ofGetHeight(), all);
     
     all->add(minimizeButton.set("Collapse All"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
     
@@ -134,6 +132,11 @@ void ofApp::setup(){
     all->loadTheme(themeName);
     
     file_pos = 0;
+    
+    // Call resize to update control panel width and adjust drawing boxes
+    windowResized(WIN_WIDTH, WIN_HEIGHT);
+    
+    
     ready = true;
 }
 
@@ -269,38 +272,21 @@ void ofApp::restartFile(){
 //--------------------------------------------------------------
 // Collapse main panels
 void ofApp::minimizePressed(){
-//    dc.minimize();
+    dc.minimize();
     inputToggles->minimize();
 }
 
 void ofApp::maximize(){
-//    dc.maximize();
-//    inputToggles->maximize();
+    dc.maximize();
+    inputToggles->maximize();
 }
 
 //--------------------------------------------------------------
 // Retrieves and formats current frame of audio input then sends to analysis
 void ofApp::audioIn(ofSoundBuffer& buffer) {
-        if(inputMode && ready)
+    if(inputMode && ready)
     {
-        audioAnalyzerIn.analyze(buffer);
-        
-        spectrum_l = audioAnalyzerIn.getValues(HPCP, 0);
-        //spectrum_r = audioAnalyzer.getValues(SPECTRUM, 1);
-        
-        
-        //Waveform update:
-        waveform_l.clear();
-        //waveform_r.clear();
-        
-        //waveform for channel 0
-        int ch=0;
-        for(size_t i = 0; i < soundBuffer.getNumFrames(); i++) {
-            float sample = soundBuffer.getSample(i, ch);
-            float x = ofMap(i, 0, soundBuffer.getNumFrames(), 0, ofGetWidth()*0.5);
-            float y = ofMap(sample, -1, 1, 0, ofGetHeight()*0.5);
-            waveform_l.addVertex(x, y);
-        }
+        analysis.analyzeFrame(buffer);
     }
 }
 
@@ -314,27 +300,10 @@ void ofApp::update(){
 
         seekSlider = file_pos;
         
-        audioAnalyzerOut.analyze(soundBuffer);
-        
-        spectrum_l = audioAnalyzerOut.getValues(HPCP, 0, 0.8);
-        
-
-        //spectrum_r = audioAnalyzer.getValues(SPECTRUM, 1);
-        
-        
-        //Waveform update:
-        waveform_l.clear();
-        //waveform_r.clear();
-        
-        //waveform for channel 0
-        int ch=0;
-        for(size_t i = 0; i < soundBuffer.getNumFrames(); i++) {
-            float sample = soundBuffer.getSample(i, ch);
-            float x = ofMap(i, 0, soundBuffer.getNumFrames(), 0, ofGetWidth()*0.5);
-            float y = ofMap(sample, -1, 1, 0, ofGetHeight()*0.5);
-            waveform_l.addVertex(x, y);
-        }
+        analysis.analyzeFrame(soundBuffer);
     }
+    
+    dc.update();
 }
 
 //--------------------------------------------------------------
@@ -353,39 +322,24 @@ void ofApp::draw(){
         }
     }
     
-    
-    //draw waveforms:
-    ofSetColor(ofColor::hotPink);
-    waveform_l.draw();
-//    waveform_r.draw();
-    
-    //draw spectrums:
-    int mw = ofGetWidth()/2;
-    
     ofPushMatrix();
-    ofTranslate(ofGetWidth()/2, 0);
-    ofSetColor(ofColor::cyan);
-    float bin_w = (float) mw / spectrum_l.size();
-    for (int i = 0; i < spectrum_l.size(); i++){
-        float scaledValue = ofMap(spectrum_l[i], 0, 1, 0.0, 1.0, true);//clamped value
-        float bin_h = -1 * (scaledValue * ofGetHeight()/2);
-        ofDrawRectangle(i*bin_w, ofGetHeight()/2, bin_w, bin_h);
-    }
+    ofTranslate(controlWidth, 0);
+    
+    dc.draw();
+    
     ofPopMatrix();
-    
-    
-    ofSetColor(100);
-    ofDrawLine(ofGetWidth()/2, 0, ofGetWidth()/2, ofGetHeight());
-    ofDrawLine(0, ofGetHeight()/2, ofGetWidth(), ofGetHeight()/2);
-    ofSetColor(255);
-    ofDrawBitmapString("ofxAudioAnalyzer - AUDIO FILE PLAYER EXAMPLE \nPress any key to play audio file ", 350, 32);
-
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     if(key == ' ') player.play();
     if(key == 'q') inputMode = !inputMode;
+}
+
+//--------------------------------------------------------------
+void ofApp::windowResized(int w, int h){
+    controlWidth = all->getWidth();
+    dc.updateLayout(w - controlWidth, h);
 }
 
 //--------------------------------------------------------------
@@ -430,11 +384,6 @@ void ofApp::mouseEntered(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
 
 }
 

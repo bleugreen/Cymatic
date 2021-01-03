@@ -1,13 +1,16 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxBaseGui.h"
 #include "ofxGuiExtended.h"
-#include "ofxStk.h"
 #include "Chromagram.h"
 #include "ofxAudioAnalyzer.h"
 #include "ofSoundPlayerExtended.h"
+#include "Analysis.h"
+#include "DisplayController.h"
 #include "utils.h"
+
+#define WIN_WIDTH 1000
+#define WIN_HEIGHT 800
 
 class ofApp : public ofBaseApp{
     
@@ -53,20 +56,25 @@ public:
     //--------------------------------------------------------------------------------
     void audioIn(ofSoundBuffer& buffer);
     void audioOut(ofSoundBuffer& buffer);
-//    void soundstream_init();
-//
-//
-//    int bufferSize;
-//    stk::FileLoop file;
+
     ofSoundStream soundStream;
     bool inputMode{};
+    
+    Analysis analysis;
     
     vector<float> spectrum_l, spectrum_r;
 
     ofPolyline waveform_l, waveform_r;
-//    bool shouldPlayAudio{};
-//
-//    //--------------------------------------------------------------------------------
+    
+    //--------------------------------------------------------------------------------
+    // drawing
+    //--------------------------------------------------------------------------------
+    void updateLayout(int w, int h);
+    int controlWidth;
+
+    DisplayController dc;
+
+    //--------------------------------------------------------------------------------
     // GUI
     //--------------------------------------------------------------------------------
 

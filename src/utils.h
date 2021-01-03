@@ -8,12 +8,13 @@
 #ifndef utils_h
 #define utils_h
 #include <vector>
+#include "ofMain.h"
 
 namespace utils {
 
 enum Mode{ LINEAR, POLAR, RAW, OSC };
 
-enum soundType{ RAW_FULL, RAW_OCTAVE, SMOOTH_OCTAVE, RAW_SCALE, SMOOTH_SCALE, SMOOTH_SCALE_OT };
+enum soundType{ FFT, HPCP, RAW_FULL, RAW_OCTAVE, SMOOTH_OCTAVE, RAW_SCALE, SMOOTH_SCALE, SMOOTH_SCALE_OT };
 
 struct soundData {
     soundType label;
@@ -43,7 +44,7 @@ static void scalePath(ofPath* path, float width, float height){
 }
 
 
-static string formatFreq(float freq){
+static std::string formatFreq(float freq){
     std::string label;
 
     if(freq > 1000){
@@ -65,12 +66,12 @@ static string formatFreq(float freq){
 
 // Returns width in pixels of a given string when drawn as a bitmap
 // adapted from https://forum.openframeworks.cc/t/how-to-get-size-of-ofdrawbitmapstring/22578/7
-static int getBitmapStringWidth(string text){
-vector<string> lines = ofSplitString(text, "\n");
+static int getBitmapStringWidth(std::string text){
+std::vector<std::string> lines = ofSplitString(text, "\n");
     int maxLineLength = 0;
     for(int i = 0; i < (int)lines.size(); i++) {
         // tabs are not rendered
-        const string & line(lines[i]);
+        const std::string & line(lines[i]);
         int currentLineLength = 0;
         for(int j = 0; j < (int)line.size(); j++) {
             if (line[j] == '\t') {
@@ -103,6 +104,23 @@ static std::string secondsToTimeLabel(float sec){
     
     return ret;
 }
+
+static void normalizeVector(std::vector<float>* input){
+    if(input->size() <= 1) return;
+    
+    float max = input->at(0);
+    float min =  input->at(0);
+    for(int i=0; i<input->size(); i++){
+        float val =  input->at(i);
+        if(val > max) max = val;
+        if(val < min) min = val;
+    }
+    for(int i=0; i<input->size(); i++){
+        input->at(i) = ofMap(input->at(i), min, max, 0, 1);
+    }
+}
+
+
 
 } // namespace utils
 
