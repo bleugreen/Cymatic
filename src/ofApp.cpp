@@ -7,16 +7,18 @@ void ofApp::setup(){
     ofxBaseGui::enableHiDpi();
     
     win = (ofAppGLFWWindow*)ofGetWindowPtr();
+    coordScale = win->getPixelScreenCoordScale();
     ofSetWindowShape(win->getPixelScreenCoordScale()*1024, win->getPixelScreenCoordScale()*768);
 //    if(win->getPixelScreenCoordScale() == 2){
 //        themeName = "retina-theme.json";
 //    }
 //    else{
     cout << "scale: " << win->getPixelScreenCoordScale() << endl;
-    coordScale = win->getPixelScreenCoordScale();
+    
     themeName = "default-theme.json";
     
 
+    cout << utils::secondsToTimeLabel(326.993) << endl;
     
     bufferSize = 2048;
     sampleRate = 44100;
@@ -40,9 +42,10 @@ void ofApp::setup(){
     player.load("filetype-test.mp3");
     
     
+    
     //chrom = new Chromagram(Chromagram::Parameters(sampleRate));
     
-    ready = true;
+    
     
     
     //-------------------------------------------------------------------------------------
@@ -57,8 +60,6 @@ void ofApp::setup(){
     all = gui.addGroup("Sonic Profiler", ofJson({
         {"flex-direction", "column"},
         {"flex", 1},
-        {"margin", 2},
-        {"padding", 2},
         {"background-color", "#181818"},
         {"flex-wrap", "wrap"},
         {"show-header", true},
@@ -75,14 +76,12 @@ void ofApp::setup(){
     
     inputToggles = all->addGroup(inputParameters);
     inputToggles->setExclusiveToggles(true);
-    //inputToggles->loadTheme(themeName);
     inputToggles->setConfig(ofJson({{"type", "radio"}}));
     
     fileManager = inputToggles->addGroup("File Manager");
-    fileManager->loadTheme(themeName);
     fileManager->setShowHeader(false);
-    fileManager->add(filePath.set("Path/To/WavFile"));
-    fileManager->add(loadButton.set("Choose File"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
+    
+    
     
     playbackControls = fileManager->addGroup("Playback",ofJson({
         {"flex-direction", "row"},
@@ -93,10 +92,18 @@ void ofApp::setup(){
         {"flex-wrap", "wrap"},
         {"show-header", false},
     }));
-    playbackControls->loadTheme(themeName);
-    playbackControls->add(playButton.set("Play"), ofJson({{"type", "fullsize"}, {"text-align", "center"}, {"width", "45%"}}));
+
+    
+    playbackControls->add(filePath.set("path"), ofJson({{"text-align", "center"}, {"width", "90%"}}));
+    filePath.setMax("AAAAAAAAAAAAAAAAAAAAAAAAA");
+    playbackControls->add(playButton.set("Play/Pause"), ofJson({{"type", "fullsize"}, {"text-align", "center"}, {"width", "45%"}}));
     playbackControls->add(resetButton.set("Reset"), ofJson({{"type", "fullsize"}, {"text-align", "center"}, {"width", "45%"}}));
+    float duration = player.getDuration();
+    playbackControls->add(seekSlider.set("Seek", 0, 0, duration), ofJson({{"precision", 0}, {"width", "100%"}}));
+    playbackControls->add(volumeSlider.set("Volume", 100, 0, 100), ofJson({{"precision", 0}, {"width", "100%"}}));
     playbackControls->minimize();
+    
+    fileManager->add(loadButton.set("Choose File"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
     fileManager->minimize();
 
    
@@ -121,31 +128,53 @@ void ofApp::setup(){
     // minimize button
     minimizeButton.addListener(this, &ofApp::minimizePressed);
     
+    seekSlider.addListener(this, &ofApp::seekChanged);
+    volumeSlider.addListener(this, &ofApp::volumeChanged);
+    
     all->loadTheme(themeName);
+    
+    file_pos = 0;
+    ready = true;
 }
 
 //-------------------------------------------------------------------------------------
 // listeners
 //-------------------------------------------------------------------------------------
 
+//--------------------------------------------------------------
+// Update input source and show/hide file manager
+void ofApp::seekChanged(float &val){
+    if(val != file_pos){
+        float pct = val / player.getDuration();
+        player.setPosition(pct);
+    }
+}
+
+//--------------------------------------------------------------
+// Update input source and show/hide file manager
+void ofApp::volumeChanged(float &val){
+    player.setVolume(val / 100.);
+}
+
 
 //--------------------------------------------------------------
 // Update input source and show/hide file manager
 void ofApp::setInputMode(int& index){
-//    switch (index) {
-//        case 0:
-//            inputBool = true;
-//            fileManager->minimize();
-//            break;
-//        case 1:
-//            inputBool = false;
-//            fileManager->maximize();
-//            if(fileLoaded) playbackControls->maximize();
-//            break;
-//
-//        default:
-//            break;
-//    }
+    switch (index) {
+        case 0:
+            inputMode = true;
+            fileManager->minimize();
+            player.setPaused(true);
+            break;
+        case 1:
+            inputMode = false;
+            fileManager->maximize();
+            if(fileLoaded) playbackControls->maximize();
+            break;
+
+        default:
+            break;
+    }
 }
 
 
@@ -153,61 +182,70 @@ void ofApp::setInputMode(int& index){
 // Open system dialog and allow user to choose .wav file
 void ofApp::loadFile(){
     
-//    // Listener fires twice when pressed (click & release)
-//    // So this check makes sure it only prompts once
-//    if(!loadPressed){
-//        loadPressed = true;
-//
-//        // Opens system dialog asking for a file
-//        // Checks to make sure it's .wav then loads
-//
-//        ofFileDialogResult result = ofSystemLoadDialog("Load file");
-//
-//        if(result.bSuccess) {
-//            filePath.set("path/to/file.wav");
-//            fileLoaded = false;
-//            playbackControls->minimize();
-//            string path = result.getPath();
-//            string name = result.getName();
-//            cout << path << endl;
-//
-//            if(0 == path.compare (path.length() - 3, 3, "wav")){
-//                try{
-//                    file.openFile(ofToDataPath(path,true));
-//                    filePath.set(name);
-//                    fileLoaded = true;
-//                    playbackControls->maximize();
-//                }
-//                catch(...){
-//                    ofSystemAlertDialog("Invalid File: Must load .wav file");
-//                }
-//            }
-//            else
-//            {
-//                ofSystemAlertDialog("Invalid File: Must load .wav file");
-//            }
-//        }
-//    }
-//
-//    loadPressed = false;
+    // Listener fires twice when pressed (click & release)
+    // So this check makes sure it only prompts once
+    if(!loadPressed){
+        loadPressed = true;
+
+        // Opens system dialog asking for a file
+        // Checks to make sure it's .wav then loads
+
+        ofFileDialogResult result = ofSystemLoadDialog("Load file");
+
+        if(result.bSuccess) {
+            fileLoaded = false;
+            playbackControls->minimize();
+            string path = result.getPath();
+            string name = result.getName();
+            cout << path << endl;
+
+     
+                try{
+                    player.unload();
+                    if(player.load(path)){
+                        if(name.length() < 25) filePath.set(name);
+                        else{
+                            std::string croppedName = name.substr(0, 24)+"...";
+                            filePath.set(croppedName);
+                        }
+                        fileLoaded = true;
+                        seekSlider.set(0);
+                        seekSlider.setMax(player.getDuration());
+                        playbackControls->maximize();
+                    }
+                    else{
+                        ofSystemAlertDialog("Invalid File");
+                    }
+                }
+                catch(...){
+                    ofSystemAlertDialog("Invalid File");
+                }
+
+        }
+    }
+
+    loadPressed = false;
 }
 
 //--------------------------------------------------------------
 // Toggle whether a file should be playing or not
 void ofApp::playFile(){
-    
-//    // Listener fires twice when pressed (click & release I think)
-//    // So this check makes sure it only prompts once
-//    if(!playPressed){
-//        playPressed = true;
-//        if(shouldPlayAudio) playButton.setName("Play");
-//        else playButton.setName("Pause");
-//
-//
-//        shouldPlayAudio = !shouldPlayAudio;
-//    }
-//
-//    playPressed = false;
+    // Listener fires twice when pressed (click & release I think)
+    // So this check makes sure it only prompts once
+    if(!playPressed){
+        playPressed = true;
+        if(player.isPlaying()) {
+            player.setPaused(true);
+        }
+        else {
+            player.play();
+        }
+
+
+        shouldPlayAudio = !shouldPlayAudio;
+    }
+
+    playPressed = false;
     
 }
 
@@ -215,14 +253,15 @@ void ofApp::playFile(){
 // Toggle whether a file should be playing or not
 void ofApp::restartFile(){
     
-//    // Listener fires twice when pressed (click & release I think)
-//    // So this check makes sure it only prompts once
-//    if(!resetPressed){
-//        resetPressed = true;
-//        file.reset();
-//    }
-//
-//    resetPressed = false;
+    // Listener fires twice when pressed (click & release I think)
+    // So this check makes sure it only prompts once
+    if(!resetPressed){
+        resetPressed = true;
+        player.setPaused(true);
+        player.setPosition(0);
+    }
+
+    resetPressed = false;
     
 }
 
@@ -231,7 +270,7 @@ void ofApp::restartFile(){
 // Collapse main panels
 void ofApp::minimizePressed(){
 //    dc.minimize();
-//    inputToggles->minimize();
+    inputToggles->minimize();
 }
 
 void ofApp::maximize(){
@@ -246,7 +285,7 @@ void ofApp::audioIn(ofSoundBuffer& buffer) {
     {
         audioAnalyzerIn.analyze(buffer);
         
-        spectrum_l = audioAnalyzerIn.getValues(SPECTRUM, 0);
+        spectrum_l = audioAnalyzerIn.getValues(HPCP, 0);
         //spectrum_r = audioAnalyzer.getValues(SPECTRUM, 1);
         
         
@@ -265,27 +304,21 @@ void ofApp::audioIn(ofSoundBuffer& buffer) {
     }
 }
 
-//--------------------------------------------------------------
-void ofApp::audioOut(ofSoundBuffer& buffer){
-    
-}
-
-
-//--------------------------------------------------------------
-void ofApp::exit(){
-   
-}
-
-
 
 //--------------------------------------------------------------
 void ofApp::update(){
     if(!inputMode && ready){
         soundBuffer = player.getCurrentSoundBuffer(bufferSize);
         
+        file_pos = player.getPosition() * player.getDuration();
+
+        seekSlider = file_pos;
+        
         audioAnalyzerOut.analyze(soundBuffer);
         
-        spectrum_l = audioAnalyzerOut.getValues(SPECTRUM, 0);
+        spectrum_l = audioAnalyzerOut.getValues(HPCP, 0, 0.8);
+        
+
         //spectrum_r = audioAnalyzer.getValues(SPECTRUM, 1);
         
         
@@ -307,9 +340,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     if(coordScale != win->getPixelScreenCoordScale()){
-        
         coordScale = win->getPixelScreenCoordScale();
-        cout << "scale changed -- new scale = " << coordScale << endl;
         switch (coordScale) {
             case 1:
                 all->loadTheme("default-theme.json");
@@ -336,7 +367,7 @@ void ofApp::draw(){
     ofSetColor(ofColor::cyan);
     float bin_w = (float) mw / spectrum_l.size();
     for (int i = 0; i < spectrum_l.size(); i++){
-        float scaledValue = ofMap(spectrum_l[i], DB_MIN, DB_MAX, 0.0, 1.0, true);//clamped value
+        float scaledValue = ofMap(spectrum_l[i], 0, 1, 0.0, 1.0, true);//clamped value
         float bin_h = -1 * (scaledValue * ofGetHeight()/2);
         ofDrawRectangle(i*bin_w, ofGetHeight()/2, bin_w, bin_h);
     }
@@ -355,6 +386,17 @@ void ofApp::draw(){
 void ofApp::keyPressed(int key){
     if(key == ' ') player.play();
     if(key == 'q') inputMode = !inputMode;
+}
+
+//--------------------------------------------------------------
+void ofApp::audioOut(ofSoundBuffer& buffer){
+    
+}
+
+
+//--------------------------------------------------------------
+void ofApp::exit(){
+   
 }
 
 //--------------------------------------------------------------

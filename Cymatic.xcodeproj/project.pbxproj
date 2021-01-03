@@ -164,6 +164,7 @@
 		307B699525A046F1002F0483 /* CQSpectrogram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CQSpectrogram.h; sourceTree = "<group>"; };
 		307B69A725A05957002F0483 /* default-theme.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "default-theme.json"; path = "bin/data/default-theme.json"; sourceTree = "<group>"; };
 		307B69A825A05957002F0483 /* retina-theme.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "retina-theme.json"; path = "bin/data/retina-theme.json"; sourceTree = "<group>"; };
+		307B69A925A15EE0002F0483 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		35DDC9D7877887B9D23690A4 /* EventTarget.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = EventTarget.h; path = ../../../addons/ofxGuiExtended/src/DOM/EventTarget.h; sourceTree = SOURCE_ROOT; };
 		35F7217E175F756A4BC0846D /* sink.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sink.h; path = ../../../addons/ofxAudioAnalyzer/libs/essentia/include/essentia/streaming/sink.h; sourceTree = SOURCE_ROOT; };
 		393C9C8AE87812AC9B52CEFB /* algorithmfactory.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = algorithmfactory.h; path = ../../../addons/ofxAudioAnalyzer/libs/essentia/include/essentia/algorithmfactory.h; sourceTree = SOURCE_ROOT; };
@@ -1272,6 +1273,7 @@
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 				05033CE3FA2B7668E6FC165F /* Analysis.h */,
+				307B69A925A15EE0002F0483 /* utils.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

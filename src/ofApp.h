@@ -7,6 +7,7 @@
 #include "Chromagram.h"
 #include "ofxAudioAnalyzer.h"
 #include "ofSoundPlayerExtended.h"
+#include "utils.h"
 
 class ofApp : public ofBaseApp{
     
@@ -43,8 +44,9 @@ public:
     bool ready{};
     
     ofAppGLFWWindow* win;
-    std::string themeName;
     int coordScale;
+    
+    std::string themeName;
     
     //--------------------------------------------------------------------------------
     // audio
@@ -98,34 +100,35 @@ public:
     //   file manager
     //--------------------------------------------------------------------------------
     ofxGuiGroup *fileManager;
-    ofxGuiGroup *playbackControls;
+    
     ofParameter<void> loadButton;
-    ofParameter<void> playButton;
-    ofParameter<void> resetButton;
     ofParameter<string> filePath;
 
     bool inputBool{true}, fileLoaded{};
-    bool loadPressed{}, playPressed{}, resetPressed{};
+    bool loadPressed{};
 
     void loadFile();
+    
+    
+    //--------------------------------------------------------------------------------
+    //   file player
+    //--------------------------------------------------------------------------------
+    bool playPressed{}, resetPressed{}, shouldPlayAudio{};
     void playFile();
     void restartFile();
+    
+    ofxGuiGroup *playbackControls;
+    ofParameter<void> playButton;
+    ofParameter<void> resetButton;
+    ofParameter<float> seekSlider;
+    ofParameter<float> volumeSlider;
+    
+    void seekChanged(float& val);
+    void volumeChanged(float& val);
+    
+    float file_pos;
 
 
-//
-//    void circleResolutionChanged(int & circleResolution);
-//    void ringButtonPressed();
-//
-//    bool bHide;
-//
-//    ofParameter<float> radius;
-//    ofParameter<ofColor> color;
-//    ofParameter<glm::vec2> center;
-//    ofParameter<int> circleResolution;
-//    ofParameter<bool> filled;
-//    ofxButton twoCircles;
-//    ofxButton ringButton;
-//    ofParameter<string> screenSize;
     
     
     
